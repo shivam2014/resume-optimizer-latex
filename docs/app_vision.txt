@@ -1,0 +1,20 @@
+This is a web optimised app for all platforms - desktop, mobile, tablets of different OS distributions.  The workflow may not translate exactly in the GUI workflow, but take the inspiration on it being an easy to use, modern, super elegant and technically advanced using MagicUI, focusing on simplicity and delivering value to the end user.
+
+The work flow is, 
+1. upload Resume as pdf,docx,txt, md files to extract the resume content via the flask api : https://github.com/shivam2014/doc2text, 
+2. In this page : 
+    a. Show the extracted resume without modifying its contents in a beautiful manner to the user
+    b. Give user the input of Job description text box or a url to extract the job description.  
+    c. Allow user to select the API provider and the model to use. The settings API must be already defined for any API provider for any model to be available in the choice
+    d. Add any additional instructions or wishes (optional) for the AI LLM to consider before optimising the resume. 
+    e. Use the https://github.com/shivam2014/resume-optimize-AI flask api to get the optimised resume content as output text. Make sure to coordinate the API key settings etc with this flask API.
+3. 
+    a. Now Show the extracted resume vs optimised resume in a beautiful manner to the user to be able to compare before vs after.  Allow user to make modifications to the optimised resume content. 
+    b. Proceed visually to latex template selection. In the latex template selection choice option, I would like to show the user the option to choose amongst the preloaded resume templates.  The resume choosing should look like this : 
+https://flowcv.com/resume-templates.  Allow user to add or remove their own latex template as well.  The templates I want to show are all in templates\latex\ folder with their corresponding .jpegs which are preview images of the resume templates.
+    c. Keeping the final resume content modifications, pass the selected latex resume template and the final resume content to the AI API, asking it to generate the updated resume latex template.
+4.  At the end, get the optimised latex template and generate pdf from it. Show the user the final pdf version preview of the compiled version of the latex template generated finally.Allow the user to go back to reedit if something is wrong and regenerate the final resume template.  Also allow the user to download the pdf version of the latex template as well as the modified .tex template for themselves.
+
+Settings page ;
+1. Allow API configuration of multiple API providers like Mistral API, Deepseek, Claude, OpenAI, or add a custom OpenAI compatible API with its custom url.
+

@@ -1,0 +1,111 @@
+\documentclass[9pt]{article}        % set main text size
+\usepackage{extsizes}               % Required to support 9pt option in article class
+\usepackage[letterpaper,            % set paper size to letterpaper
+top=0.5in,                          % specify top page margin
+bottom=0.5in,                       % specify bottom page margin
+left=0.5in,                         % specify left page margin
+right=0.5in]{geometry}              % specify right page margin
+                        
+\usepackage{charter}                % Use the charter package for Bitstream Charter-like font
+\usepackage[T1]{fontenc}            % output encoding
+\usepackage[utf8]{inputenc}         % input encoding
+\usepackage{microtype}              % for letter spacing (tracking) control
+\usepackage{enumitem}               % enable lists for bullet points: itemize and \item
+\usepackage[hidelinks]{hyperref}    % format hyperlinks
+\usepackage{titlesec}               % enable section title customization
+\raggedright                        % disable text justification
+\pagestyle{empty}                   % disable page numbering
+
+% ensure PDF output will be all-Unicode and machine-readable
+\input{glyphtounicode}
+\pdfgentounicode=1
+
+% format section headings: non-bold, regular weight, size, white space above and below, with minimal spacing
+\titleformat{\section}{\normalfont\large}{}{0pt}{}[\vspace{0pt}\titlerule\vspace{-2pt}]
+
+% format bullet points: size, white space above and below, white space between bullets (tighter)
+\renewcommand\labelitemi{$\vcenter{\hbox{\tiny$\bullet$}}$} % Changed to \tiny for smaller bullets
+\setlist[itemize]{itemsep=-4pt, leftmargin=12pt, topsep=4pt} % Tighter vertical spacing
+
+% resume starts here
+\begin{document}
+
+% name with different font sizes for first letters and remaining letters, all in bold, with increased letter spacing
+\centerline{%
+  \fontfamily{bch}\selectfont\textbf{%
+    {\fontsize{20.74}{25}\selectfont\textls[50]{A}}%
+    {\fontsize{14.4}{18}\selectfont\textls[50]{LEXANDER}}%
+    \hspace{0.5em}%
+    {\fontsize{20.74}{25}\selectfont\textls[50]{M}}%
+    {\fontsize{14.4}{18}\selectfont\textls[50]{ITCHELL}}%
+  }%  
+}
+\vspace{+2pt}
+
+% contact information (default spacing, no letter spacing adjustment)
+\centerline{ +1-555-123-4567 | \href{mailto:alex.mitchell@email.com}{alex.mitchell@email.com} | \href{https://www.linkedin.com/in/alexmitchell}{linkedin.com/in/alexmitchell} | EU Work Authorization }
+
+\vspace{+12pt}
+
+% Tighter vertical spacing for summary
+Systems Engineer with over 6 years of experience in aerospace systems and software development. Demonstrated success in leading complex technical projects, implementing automation solutions, and ensuring regulatory compliance. Expertise in flight systems, performance analysis, and cross-functional team leadership.
+
+\section*{{\fontsize{12}{14.4}\selectfont\textls[50]{S}}{\fontsize{9}{10.8}\selectfont\textls[50]{KILLS}}}
+\begin{itemize}
+\item \textbf{Project Management:} Agile/Scrum, Team Leadership, Strategic Planning, Risk Management
+\item \textbf{Technical Skills:} Systems Architecture, Flight Dynamics, Performance Analysis, Safety Systems
+\item \textbf{Programming:} Python, C++, MATLAB, Git, Docker, CI/CD, REST APIs, Test Automation
+\item \textbf{Data \& Analytics:} SQL, Tableau, Power BI, Statistical Analysis, Machine Learning
+\item \textbf{Systems Engineering:} Requirements Management, MBSE, V\&V, Jira, Enterprise Architecture
+\item \textbf{Engineering Tools:} CAD/CAM, FEA, CFD, PLM Systems, Digital Twin Technologies
+\end{itemize}
+
+\section*{{\fontsize{12}{14.4}\selectfont\textls[50]{E}}{\fontsize{9}{10.8}\selectfont\textls[50]{XPERIENCE}}}
+\textbf{Senior Systems Engineer} \hfill {Jan 2021 – Present} \\
+\textit{AeroTech Solutions} \hfill \textit{Munich, Germany}
+\begin{itemize}
+  \item Spearheaded development of next-generation flight control software, achieving 40% improvement in system response time
+  \item Led integration of AI-driven predictive maintenance system, reducing unplanned downtime by 65% across fleet operations
+  \item Managed cross-functional team of 12 engineers, delivering 3 major system updates ahead of schedule
+  \item Implemented automated testing framework, increasing test coverage by 85% while reducing validation time by 60%
+\end{itemize}
+\vspace{+5pt}
+
+\textbf{Systems Integration Engineer} \hfill {Mar 2019 – Dec 2020}\\
+\textit{Global Aviation Systems} \hfill \textit{Hamburg, Germany}
+\begin{itemize}
+  \item Developed and implemented system architecture for new aircraft monitoring platform, serving 50+ airline customers
+  \item Led technical requirements gathering and validation for safety-critical systems, ensuring compliance with EASA standards
+  \item Optimized system integration processes, reducing deployment time by 45% while maintaining quality standards
+\end{itemize}
+\vspace{+5pt}
+
+\textbf{Systems Engineer (Graduate Position)} \hfill {Jun 2018 – Feb 2019}\\
+\textit{Advanced Flight Systems} \hfill \textit{Berlin, Germany} 
+\begin{itemize}
+  \item Designed and implemented automated testing protocols for flight control systems, improving efficiency by 30%
+  \item Developed simulation models for system performance analysis, contributing to certification requirements
+\end{itemize}
+
+\section*{{\fontsize{12}{14.4}\selectfont\textls[50]{E}}{\fontsize{9}{10.8}\selectfont\textls[50]{DUCATION}}}
+\textbf{Technical University of Munich} -- M.Sc. in Aerospace Engineering \hfill Sep 2016 - May 2018 \\
+\textbf{University of Stuttgart} -- B.Eng. in Mechanical Engineering \hfill Sep 2012 - Jun 2016
+
+\section*{{\fontsize{12}{14.4}\selectfont\textls[50]{P}}{\fontsize{9}{10.8}\selectfont\textls[50]{ROFESSIONAL DEVELOPMENT \& LANGUAGES}}}
+\textbf{Certifications:} Advanced Systems Engineering (TÜV), Machine Learning Specialization (Stanford Online) \\
+\textbf{Languages:} English (Native), German (C1), Spanish (B1) \\
+\textbf{Interests:} Robotics, Drone Photography \\
+\textbf{Side Projects:} \\
+\vspace{-6 pt}
+\begin{itemize}
+  \item Creator of OpenFlightSim: Open-source flight simulation platform with 1000+ GitHub stars
+  \item Technical Lead for University Robotics Team: Led team to 2nd place in European Robotics Challenge 2023
+\end{itemize}
+
+\section*{{\fontsize{12}{14.4}\selectfont\textls[50]{P}}{\fontsize{9}{10.8}\selectfont\textls[50]{UBLICATIONS}}}
+\begin{itemize}
+  \item \href{https://example.com/paper1}{"Advanced Flight Control Systems: A Modern Approach," IEEE Aerospace Conference, 2023}
+  \item \href{https://example.com/paper2}{"Machine Learning in Aircraft Systems: Applications and Challenges," International Journal of Aerospace Engineering, 2022}
+\end{itemize}
+
+\end{document}
