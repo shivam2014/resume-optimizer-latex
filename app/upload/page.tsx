@@ -9,59 +9,31 @@ import { useToast } from "@/components/ui/use-toast"
 import { ArrowLeft } from "lucide-react"
 
 export default function UploadPage() {
-  const [isUploading, setIsUploading] = useState(false)
-  const [uploadProgress, setUploadProgress] = useState(0)
   const router = useRouter()
   const { toast } = useToast()
 
-  const handleUpload = async (file: File) => {
+  const handleConversionComplete = (result: ConversionResult) => {
     try {
-      setIsUploading(true)
-
-      // Simulate upload progress
-      const interval = setInterval(() => {
-        setUploadProgress((prev) => {
-          if (prev >= 95) {
-            clearInterval(interval)
-            return prev
-          }
-          return prev + 5
-        })
-      }, 100)
-
-      // Create form data
-      const formData = new FormData()
-      formData.append("file", file)
-
-      // Call the Flask API to extract resume content
-      const response = await fetch("https://github.com/shivam2014/doc2text", {
-        method: "POST",
-        body: formData,
-      })
-
-      clearInterval(interval)
-      setUploadProgress(100)
-
-      if (!response.ok) {
-        throw new Error("Failed to extract resume content")
-      }
-
-      const data = await response.json()
-
-      // Store the extracted content in localStorage for the next step
-      localStorage.setItem("resumeContent", data.content)
-
-      // Navigate to the next step
-      router.push("/optimize")
-    } catch (error) {
-      console.error("Error uploading file:", error)
+      // Store the structured resume data in localStorage
+      localStorage.setItem("resumeData", JSON.stringify({
+        text: result.text,
+        sections: result.sections,
+        metadata: result.metadata
+      }))
+      
       toast({
-        title: "Upload Failed",
-        description: "There was an error uploading your resume. Please try again.",
+        title: "Success",
+        description: `Resume processed successfully! Extracted ${result.sections.length} sections.`,
+      })
+      
+      // Router.push is handled by the FileUploader component
+    } catch (error) {
+      console.error("Error storing resume content:", error)
+      toast({
+        title: "Error",
+        description: "Failed to process your resume. Please try again.",
         variant: "destructive",
       })
-      setIsUploading(false)
-      setUploadProgress(0)
     }
   }
 
@@ -79,10 +51,7 @@ export default function UploadPage() {
           </div>
 
           <FileUploader
-            onFileSelect={handleUpload}
-            isUploading={isUploading}
-            progress={uploadProgress}
-            acceptedFileTypes={[".pdf", ".docx", ".txt", ".md"]}
+            onConversionComplete={handleConversionComplete}
           />
 
           <div className="flex justify-between mt-6">
@@ -97,10 +66,9 @@ export default function UploadPage() {
 
             <Button
               onClick={handleSkipDemo}
-              disabled={isUploading}
               className="bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:opacity-90"
             >
-              {isUploading ? <LoadingSpinner /> : "Skip (Demo)"}
+              Skip (Demo)
             </Button>
           </div>
         </div>

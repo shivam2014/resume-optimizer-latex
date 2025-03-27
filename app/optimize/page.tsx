@@ -26,10 +26,11 @@ export default function OptimizePage() {
   const { toast } = useToast()
 
   useEffect(() => {
-    // Get resume content from localStorage
-    const savedContent = localStorage.getItem("resumeContent")
-    if (savedContent) {
-      setResumeContent(savedContent)
+    // Get resume data from localStorage
+    const savedData = localStorage.getItem("resumeData")
+    if (savedData) {
+      const { text } = JSON.parse(savedData)
+      setResumeContent(text)
     } else {
       // Demo content if nothing is in localStorage
       setResumeContent(`John Doe
@@ -158,7 +159,19 @@ TECHNICAL SKILLS
 
           <div className="space-y-6">
             <div>
-              <h3 className="text-white text-lg font-medium mb-2">Your Resume</h3>
+              <div className="flex justify-between items-center mb-2">
+                <h3 className="text-white text-lg font-medium">Your Resume</h3>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setResumeContent("")
+                    localStorage.removeItem("resumeData")
+                  }}
+                  className="bg-transparent border-zinc-700 text-zinc-300 hover:bg-zinc-800 hover:text-white"
+                >
+                  Clear Resume
+                </Button>
+              </div>
               <ResumeViewer content={resumeContent} />
             </div>
 
@@ -320,4 +333,3 @@ TECHNICAL SKILLS
     </div>
   )
 }
-

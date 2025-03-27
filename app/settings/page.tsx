@@ -1,5 +1,6 @@
 "use client"
 
+import "./styles.css"
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
@@ -7,9 +8,17 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { useToast } from "@/components/ui/use-toast"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { ApiKeyForm } from "@/components/api-key-form"
-import { ArrowLeft, Save } from "lucide-react"
+import { ArrowLeft, Check, Save } from "lucide-react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { getAvailableModels } from "@/lib/api/llm-service"
 
 // Default API providers
 const defaultProviders = [
@@ -17,7 +26,7 @@ const defaultProviders = [
     id: "openai",
     name: "OpenAI",
     url: "https://api.openai.com/v1",
-    models: ["gpt-4o", "gpt-4", "gpt-3.5-turbo"],
+    models: ["gpt-4", "gpt-3.5-turbo"],
     isActive: true,
     apiKey: "",
   },
@@ -25,7 +34,7 @@ const defaultProviders = [
     id: "mistral",
     name: "Mistral AI",
     url: "https://api.mistral.ai/v1",
-    models: ["mistral-large", "mistral-medium", "mistral-small"],
+    models: ["mistral-small-latest"],
     isActive: false,
     apiKey: "",
   },
@@ -50,6 +59,7 @@ const defaultProviders = [
 export default function SettingsPage() {
   const [providers, setProviders] = useState(defaultProviders)
   const [activeProvider, setActiveProvider] = useState("openai")
+  const [isLoadingModels, setIsLoadingModels] = useState(false)
   const router = useRouter()
   const { toast } = useToast()
 
@@ -60,6 +70,28 @@ export default function SettingsPage() {
       setProviders(JSON.parse(savedProviders))
     }
   }, [])
+
+  const updateMistralModels = async (apiKey: string) => {
+    if (!apiKey) return
+
+    setIsLoadingModels(true)
+    try {
+      const models = await getAvailableModels("mistral", apiKey)
+      handleUpdateProvider("mistral", { models })
+      toast({
+        title: "Models Updated",
+        description: `Successfully fetched ${models.length} models from Mistral API.`,
+      })
+    } catch (error: any) {
+      toast({
+        title: "Error Fetching Models",
+        description: error.message,
+        variant: "destructive",
+      })
+    } finally {
+      setIsLoadingModels(false)
+    }
+  }
 
   const handleSaveSettings = () => {
     // Save providers to localStorage
@@ -74,9 +106,33 @@ export default function SettingsPage() {
   }
 
   const handleUpdateProvider = (providerId: string, updates: any) => {
-    const updatedProviders = providers.map((provider) =>
-      provider.id === providerId ? { ...provider, ...updates } : provider,
-    )
+    const updatedProviders = providers.map((provider) => {
+      // If we're updating isActive to true for a provider
+      if (updates.isActive === true) {
+        if (provider.id === providerId) {
+          // This is the provider being activated
+          const updatedProvider = { ...provider, ...updates }
+          // If updating API key for Mistral, fetch models
+          if (updates.apiKey && providerId === "mistral") {
+            updateMistralModels(updates.apiKey)
+          }
+          return updatedProvider
+        } else {
+          // Set all other providers to inactive
+          return { ...provider, isActive: false }
+        }
+      }
+      
+      // Handle non-isActive updates normally
+      if (provider.id === providerId) {
+        const updatedProvider = { ...provider, ...updates }
+        if (updates.apiKey && providerId === "mistral") {
+          updateMistralModels(updates.apiKey)
+        }
+        return updatedProvider
+      }
+      return provider
+    })
     setProviders(updatedProviders)
   }
 
@@ -101,9 +157,13 @@ export default function SettingsPage() {
     })
   }
 
+  const handleModelSelectChange = (providerId: string, selectedModel: string) => {
+      handleUpdateProvider(providerId, { models: [selectedModel] }); // Store selected model
+  };
+
   return (
-    <div className="mesh-gradient min-h-screen py-12 px-4">
-      <div className="dark-card rounded-xl w-full max-w-4xl mx-auto shadow-2xl">
+    <div className="writora-gradient min-h-screen py-12 px-4">
+      <div className="card-glow rounded-xl w-full max-w-4xl mx-auto shadow-2xl">
         <div className="p-6">
           <div className="mb-6">
             <h1 className="text-white text-2xl font-bold mb-2">API Settings</h1>
@@ -117,9 +177,18 @@ export default function SettingsPage() {
                   <TabsTrigger
                     key={provider.id}
                     value={provider.id}
-                    className="data-[state=active]:bg-white/20 data-[state=active]:text-white px-4 py-2"
+                    className={`
+                      provider-tab
+                      ${provider.isActive && provider.id === activeProvider ? 'provider-tab-active-selected' : ''}
+                      ${!provider.isActive && provider.id === activeProvider ? 'provider-tab-selected' : ''}
+                    `}
                   >
-                    {provider.name}
+                    {provider.isActive && (
+                      <Check className="provider-check" />
+                    )}
+                    <span className="provider-name">
+                      {provider.name}
+                    </span>
                   </TabsTrigger>
                 ))}
               </TabsList>
@@ -176,47 +245,38 @@ export default function SettingsPage() {
                   onUpdate={(apiKey) => handleUpdateProvider(provider.id, { apiKey })}
                 />
 
+                {/* Refactored Available Models Section */}
                 <div className="space-y-2">
-                  <Label className="text-white">Available Models</Label>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
-                    {provider.models.map((model, index) => (
-                      <div
-                        key={index}
-                        className="flex items-center space-x-2 p-2 border rounded-md border-white/20 bg-white/5"
+                  <div className="flex justify-between items-center">
+                    <Label className="text-white">Available Model</Label>
+                    {provider.id === "mistral" && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => updateMistralModels(provider.apiKey)}
+                        disabled={isLoadingModels || !provider.apiKey}
+                        className="h-8 bg-transparent border-white/20 text-white hover:bg-white/10"
                       >
-                        <Input
-                          value={model}
-                          onChange={(e) => {
-                            const updatedModels = [...provider.models]
-                            updatedModels[index] = e.target.value
-                            handleUpdateProvider(provider.id, { models: updatedModels })
-                          }}
-                          className="h-8 bg-white/10 border-white/20 text-white"
-                        />
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => {
-                            const updatedModels = provider.models.filter((_, i) => i !== index)
-                            handleUpdateProvider(provider.id, { models: updatedModels })
-                          }}
-                          className="h-8 w-8 p-0 text-white hover:bg-white/10"
-                        >
-                          ×
-                        </Button>
-                      </div>
-                    ))}
-                    <Button
-                      variant="outline"
-                      onClick={() => {
-                        const updatedModels = [...provider.models, "new-model"]
-                        handleUpdateProvider(provider.id, { models: updatedModels })
-                      }}
-                      className="h-8 bg-transparent border-white/20 text-white hover:bg-white/10"
-                    >
-                      Add Model
-                    </Button>
+                        {isLoadingModels ? "Loading..." : "Fetch Models"}
+                      </Button>
+                    )}
                   </div>
+
+                  <Select
+                    value={provider.models[0] || ""} // Currently selected model
+                    onValueChange={(value) => handleModelSelectChange(provider.id, value)}
+                  >
+                    <SelectTrigger className="bg-white/10 border-white/20 text-white w-full">
+                      <SelectValue placeholder="Select a model" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {provider.models.map((model) => (
+                        <SelectItem key={model} value={model}>
+                          {model}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
 
                 <div className="flex items-center space-x-2">
@@ -260,4 +320,3 @@ export default function SettingsPage() {
     </div>
   )
 }
-

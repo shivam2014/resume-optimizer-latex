@@ -1,13 +1,13 @@
 This is a web optimised app for all platforms - desktop, mobile, tablets of different OS distributions.  The workflow may not translate exactly in the GUI workflow, but take the inspiration on it being an easy to use, modern, super elegant and technically advanced using MagicUI, focusing on simplicity and delivering value to the end user.
 
 The work flow is, 
-1. upload Resume as pdf,docx,txt, md files to extract the resume content via the flask api : https://github.com/shivam2014/doc2text, 
+1. upload Resume as pdf,docx,txt, md files to extract the resume content using the integrated document conversion service,
 2. In this page : 
     a. Show the extracted resume without modifying its contents in a beautiful manner to the user
     b. Give user the input of Job description text box or a url to extract the job description.  
     c. Allow user to select the API provider and the model to use. The settings API must be already defined for any API provider for any model to be available in the choice
     d. Add any additional instructions or wishes (optional) for the AI LLM to consider before optimising the resume. 
-    e. Use the https://github.com/shivam2014/resume-optimize-AI flask api to get the optimised resume content as output text. Make sure to coordinate the API key settings etc with this flask API.
+    e. Use the integrated AI service to get the optimised resume content as output text. Make sure to configure the appropriate API settings in the settings page.
 3. 
     a. Now Show the extracted resume vs optimised resume in a beautiful manner to the user to be able to compare before vs after.  Allow user to make modifications to the optimised resume content. 
     b. Proceed visually to latex template selection. In the latex template selection choice option, I would like to show the user the option to choose amongst the preloaded resume templates.  The resume choosing should look like this : 

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Test</title>
+    <style>
+        body { padding: 20px; font-family: Arial, sans-serif; }
+        #result { 
+            white-space: pre-wrap; 
+            word-break: break-word;
+            padding: 10px;
+            border: 1px solid #ccc;
+            margin-top: 10px;
+        }
+        .error { color: red; }
+        .success { color: green; }
+        .loading { color: blue; }
+    </style>
+</head>
+<body>
+    <h1>API Test</h1>
+    <p>Test the PDF conversion API endpoint</p>
+    
+    <form id="uploadForm">
+        <input type="file" name="file" accept=".pdf,.docx,.txt,.md" required />
+        <button type="submit">Upload</button>
+    </form>
+    
+    <div id="result"></div>
+
+    <script>
+        const apiUrl = 'http://localhost:3001/api/convert';
+        const resultDiv = document.getElementById('result');
+        
+        function showResult(message, type = 'normal') {
+            resultDiv.textContent = message;
+            resultDiv.className = type;
+        }
+
+        async function uploadFile(formData) {
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                body: formData,
+                mode: 'cors'
+            });
+
+            const contentType = response.headers.get('content-type');
+            if (!contentType || !contentType.includes('application/json')) {
+                throw new Error(`Invalid response type: ${contentType}`);
+            }
+
+            const data = await response.json();
+            if (!response.ok) {
+                throw new Error(data.error || `HTTP error! status: ${response.status}`);
+            }
+
+            return data;
+        }
+
+        document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            showResult('Uploading...', 'loading');
+
+            try {
+                const formData = new FormData(e.target);
+                const data = await uploadFile(formData);
+                showResult(
+                    `Success!\n\nExtracted Text:\n${data.text}`,
+                    'success'
+                );
+            } catch (error) {
+                console.error('Error:', error);
+                showResult(`Error: ${error.message}`, 'error');
+            }
+        });
+
+        // Test health check endpoint
+        fetch(apiUrl.replace('/convert', '/health'))
+            .then(response => response.json())
+            .then(data => console.log('Health check:', data))
+            .catch(error => console.error('Health check failed:', error));
+    </script>
+</body>
+</html>
